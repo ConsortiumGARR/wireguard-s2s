@@ -1,3 +1,4 @@
 ---
 wireguard_interface_restart: true
 wireguard_remote_directory: "/etc/wireguard"
+wireguard_save_config: false
