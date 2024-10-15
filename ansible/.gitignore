@@ -1,0 +1,3 @@
+.vault.pwd
+/.ansible/
+hosts.ini

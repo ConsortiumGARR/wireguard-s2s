@@ -1,0 +1,31 @@
+---
+# Wireguard settings
+
+wireguard_addresses:
+  - 10.252.1.2/24
+wireguard_allowed_ips: 10.252.1.2/32,192.168.168.0/24
+wireguard_endpoint: "{{ ansible_host }}"
+wireguard_persistent_keepalive: 15
+wireguard_dns: 1.1.1.1,1.0.0.1
+wireguard_fwmark: 1234
+wireguard_mtu: 1450
+wireguard_table: auto
+wireguard_preup:
+  - echo 1 > /proc/sys/net/ipv4/ip_forward
+  - echo 1 > /proc/sys/net/ipv6/conf/all/forwarding
+wireguard_predown:
+  - echo 0 > /proc/sys/net/ipv4/ip_forward
+  - echo 0 > /proc/sys/net/ipv6/conf/all/forwarding
+wireguard_postup:
+  - iptables -A FORWARD -i %i -j ACCEPT
+  - iptables -A FORWARD -o %i -j ACCEPT
+  - "iptables -t nat -A POSTROUTING -o {{ private_interface_name }} -j MASQUERADE"
+wireguard_postdown:
+  - iptables -D FORWARD -i %i -j ACCEPT
+  - iptables -D FORWARD -o %i -j ACCEPT
+  - "iptables -t nat -D POSTROUTING -o {{ private_interface_name }} -j MASQUERADE"
+wireguard_save_config: false
+
+# VM settings
+
+private_interface_name: ens3

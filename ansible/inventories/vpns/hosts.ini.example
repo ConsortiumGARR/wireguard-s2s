@@ -1,0 +1,3 @@
+[vpns]
+wireguard-pa ansible_host=<wireguard-pa-ip> ansible_user=debian
+wireguard-ct ansible_host=<wireguard-ct-ip> ansible_user=debian

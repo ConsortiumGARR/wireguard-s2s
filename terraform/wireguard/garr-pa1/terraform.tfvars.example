@@ -1,0 +1,8 @@
+keypair_name = "GARR Cloud"
+instance_name = "Wireguard PA"
+instance_flavor = "c1.tiny"
+port_name = "wg_port"
+network_name = "wg_network"
+subnet_name = "wg_subnet"
+subnet_cidr = "192.168.167.0/24"
+router_name = "wg_router"

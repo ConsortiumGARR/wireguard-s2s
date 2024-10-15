@@ -1,0 +1,4 @@
+.terraform
+clouds.yaml
+terraform.tfvars
+terraform.tfstate*

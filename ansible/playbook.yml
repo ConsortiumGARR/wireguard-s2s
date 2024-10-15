@@ -1,0 +1,76 @@
+---
+- name: Deploy wireguard
+  hosts: all
+  become: true
+  roles:
+    - githubixx.ansible_role_wireguard
+  pre_tasks:
+    - name: Install iptables-persistent package
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop:
+        - iptables-persistent
+        - iptables
+
+    - name: Allow ICMP echo-request and echo-reply
+      ansible.builtin.iptables:
+        chain: INPUT
+        protocol: icmp
+        icmp_type: 8 # Echo request type
+        jump: ACCEPT
+        comment: "Allow ICMP echo request (ping)"
+        state: present
+
+    - name: Allow ICMP echo-reply
+      ansible.builtin.iptables:
+        chain: OUTPUT
+        protocol: icmp
+        icmp_type: 0 # Echo reply type
+        jump: ACCEPT
+        comment: "Allow ICMP echo reply (ping)"
+        state: present
+
+    - name: Allow new incoming SYN packets on TCP port 22 (SSH)
+      ansible.builtin.iptables:
+        chain: INPUT
+        protocol: tcp
+        destination_port: 22
+        ctstate: NEW
+        syn: match
+        jump: ACCEPT
+        comment: Accept new SSH connections.
+
+    - name: Allow related and established connections
+      ansible.builtin.iptables:
+        chain: INPUT
+        ctstate: ESTABLISHED,RELATED
+        jump: ACCEPT
+
+    - name: Open WireGuard port
+      ansible.builtin.iptables:
+        chain: INPUT
+        protocol: udp
+        destination_port: 51820
+        jump: ACCEPT
+        action: insert
+
+    - name: Set the policy for the INPUT chain to DROP
+      ansible.builtin.iptables:
+        chain: INPUT
+        policy: DROP
+        ip_version: "{{ item }}"
+      loop:
+        - ipv4
+        - ipv6
+
+    - name: Save current state IPv4/6 of the firewall in system file
+      community.general.iptables_state:
+        ip_version: "ip{{ item }}"
+        table: filter
+        state: saved
+        path: "/etc/iptables/rules.{{ item }}"
+      loop:
+        - v4
+        - v6
