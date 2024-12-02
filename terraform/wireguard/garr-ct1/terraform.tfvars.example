@@ -5,4 +5,5 @@ port_name = "wg_port"
 network_name = "wg_network"
 subnet_name = "wg_subnet"
 subnet_cidr = "192.168.168.0/24"
+subnet_dns_nameservers = ["193.206.141.38", "193.206.141.42"]
 router_name = "wg_router"

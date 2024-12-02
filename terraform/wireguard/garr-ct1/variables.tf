@@ -42,6 +42,12 @@ variable "subnet_cidr" {
   description = "Subnet CIDR"
 }
 
+variable "subnet_dns_nameservers" {
+  type = list(string)
+  description = "Subnet DNS nameservers"
+  default = ["8.8.8.8"]
+}
+
 variable "router_name" {
   type = string
   description = "Name of the router"
